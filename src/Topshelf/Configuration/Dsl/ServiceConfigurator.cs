@@ -19,9 +19,24 @@ namespace Topshelf.Configuration.Dsl
         IServiceConfigurator<TService>
         where TService : class
     {
+        private static readonly log4net.ILog _Log = log4net.LogManager.GetLogger("Topshelf.Configuration.Dsl.ServiceConfigurator");
+
         public IServiceController Create()
         {
-            IServiceController serviceController = new ServiceController<TService>
+                _Log.InfoFormat("Crating config for {0}", typeof(TService).Name);
+
+        Type d1 = typeof(ServiceController<>);
+        Type[] typeArgs = { typeof(TService) };
+        Type makeme = d1.MakeGenericType(typeArgs);
+        ServiceController<TService> serviceController = Activator.CreateInstance(makeme) as ServiceController<TService>;
+        serviceController.StartAction = _startAction;
+        serviceController.StopAction = _stopAction;
+        serviceController.ContinueAction = _continueAction;
+        serviceController.PauseAction = _pauseAction;
+        serviceController.BuildService = _buildAction;
+        serviceController.Name = _name;
+
+            /*IServiceController serviceController = new ServiceController<TService>
                                                    {
                                                        StartAction = _startAction,
                                                        StopAction = _stopAction,
@@ -29,11 +44,10 @@ namespace Topshelf.Configuration.Dsl
                                                        ContinueAction = _continueAction,
                                                        BuildService = _buildAction,
                                                        Name = _name,
-                                                   };
+                                                   }; */
 
+            _Log.InfoFormat("Created..");
             return serviceController;
         }
-
-
     }
 }
