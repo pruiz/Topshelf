@@ -19,6 +19,7 @@ namespace Topshelf.Commands.CommandLine
     using System.Threading;
     using log4net;
     using Magnum.CommandLineParser;
+	using Topshelf;
     using Model;
 
     public class RunCommand :
@@ -95,6 +96,10 @@ namespace Topshelf.Commands.CommandLine
 
         void CheckToSeeIfWinServiceRunning()
         {
+			// Mono (on unix) does not implement service controller.
+			if (EnviromentHelper.RunningOnMono && EnviromentHelper.RunninOnUnix)
+				return;
+
             if(ServiceController.GetServices().Where(s => s.ServiceName == _serviceName).Any())
             {
                 _log.WarnFormat("There is an instance of this {0} running as a windows service", _serviceName);

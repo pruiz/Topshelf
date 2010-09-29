@@ -12,6 +12,7 @@
 // specific language governing permissions and limitations under the License.
 namespace Topshelf.Configuration.Dsl
 {
+    using System;
     using Model;
 
     public class ServiceConfigurator<TService> :
